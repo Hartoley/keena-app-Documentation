@@ -1,0 +1,12 @@
+{
+  "dependencies": {
+    "express": "^5.1.0",
+    "nodemon": "^3.1.10",
+    "swagger-ui-express": "^5.0.1",
+    "yamljs": "^0.3.0"
+  },
+  "scripts": {
+   "start": "node SWAGGER/index.js",
+  "dev": "nodemon SWAGGER/index.js"
+}
+}

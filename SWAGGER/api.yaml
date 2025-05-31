@@ -1,0 +1,96 @@
+openapi: 3.0.0
+info:
+  title: Keena Savory Bites API
+  description: This is Keena's savory bites web app documentation made by Keena
+  version: 1.0.0
+  contact:
+    name: Keena Jimoh
+    email: tolanijimoh1@gmail.com
+    url: https://keenasavorybites.example.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+
+servers:
+  - url: http://localhost:4000/
+    description: Local development server
+  - url: https://chef-chiller-node.onrender.com
+    description: Production server
+
+paths:
+  /upload:
+    post:
+      summary: Upload a new product
+      description: Admin can upload a new product with image and details.
+      tags:
+        - Products
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - name
+                - category
+                - price
+                - image
+              properties:
+                name:
+                  type: string
+                  example: Spicy Chicken Wings
+                category:
+                  type: string
+                  example: Appetizer
+                prepTime:
+                  type: string
+                  example: 15 minutes
+                description:
+                  type: string
+                  example: Hot and crispy wings with spicy sauce
+                price:
+                  type: number
+                  format: float
+                  example: 9.99
+                image:
+                  type: string
+                  format: binary
+      responses:
+        "200":
+          description: Product uploaded successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Product uploaded successfully
+                  product:
+                    $ref: "#/components/schemas/Product"
+        "400":
+          description: Missing required fields
+        "409":
+          description: Product already exists
+        "500":
+          description: Internal server error
+components:
+  schemas:
+    Product:
+      type: object
+      properties:
+        _id:
+          type: string
+        name:
+          type: string
+        category:
+          type: string
+        prepTime:
+          type: string
+        description:
+          type: string
+        price:
+          type: number
+        image:
+          type: string
+          format: uri
