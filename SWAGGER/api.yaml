@@ -26,7 +26,7 @@ paths:
               $ref: "#/components/schemas/UserSignupRequest"
       responses:
         "201":
-          description: User signed up successfully
+          description: User signed up successfully. OTP sent.
           content:
             application/json:
               schema:
@@ -34,10 +34,16 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: User signed up successfully
+                    example: User signed up successfully. OTP sent to your for verification, kindly check under spam if not found under Inbox.
                   status:
                     type: boolean
                     example: true
+                  userId:
+                    type: string
+                    example: 6657b4d85c760c001f5b2101
+                  otp:
+                    type: string
+                    example: "123456"
         "400":
           description: Invalid input or missing fields
           content:
@@ -60,12 +66,189 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: Username already exists, kindly pick another one
+                    example: Username or email already exists
                   status:
                     type: boolean
                     example: false
         "500":
           description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Internal server error
+                  status:
+                    type: boolean
+                    example: false
+
+  /qurioans/verifyotp/{userId}:
+    get:
+      summary: Verify User OTP
+      description: Confirms user's OTP and activates the account.
+      tags:
+        - User - Authentication
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+          example: 6657b4d85c760c001f5b2101
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - otp
+              properties:
+                otp:
+                  type: string
+                  example: "123456"
+      responses:
+        "200":
+          description: OTP verified successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: OTP verified successfully. Account is now active.
+                  status:
+                    type: boolean
+                    example: true
+        "400":
+          description: Missing OTP or already verified
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: OTP are required
+                  status:
+                    type: boolean
+                    example: false
+        "401":
+          description: Invalid OTP
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Invalid OTP
+                  status:
+                    type: boolean
+                    example: false
+        "410":
+          description: OTP has expired
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: OTP has expired
+                  status:
+                    type: boolean
+                    example: false
+        "404":
+          description: User not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: User not found
+                  status:
+                    type: boolean
+                    example: false
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Internal server error
+                  status:
+                    type: boolean
+                    example: false
+
+  /qurioans/regenerateotp/{userId}:
+    get:
+      summary: Regenerate OTP
+      description: Generates a new OTP for an unverified user and sends it to their registered email address.
+      tags:
+        - User - Authentication
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: Unique identifier of the user
+          schema:
+            type: string
+            example: 64fe81a9b9c41e001eaa1234
+      responses:
+        "201":
+          description: OTP regenerated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Newly generated OTP sent to your email for verification, kindly check under spam if not found under Inbox.
+                  status:
+                    type: boolean
+                    example: true
+                  userId:
+                    type: string
+                    example: 64fe81a9b9c41e001eaa1234
+                  otp:
+                    type: string
+                    example: "123456"
+        "404":
+          description: User not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: User not found
+                  status:
+                    type: boolean
+                    example: false
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Internal server error
+                  status:
+                    type: boolean
+                    example: false
 
   /qurioans/signin:
     post:
@@ -163,27 +346,9 @@ paths:
                   message:
                     type: string
                     example: Internal server error
-
-                    components:
-  schemas:
-    UserSignupRequest:
-      type: object
-      required:
-        - userName
-        - email
-        - password
-      properties:
-        userName:
-          type: string
-          example: johndoe
-        email:
-          type: string
-          format: email
-          example: johndoe@example.com
-        password:
-          type: string
-          format: password
-          example: strongPassword123
+                  status:
+                    type: boolean
+                    example: false
 
 components:
   schemas:
