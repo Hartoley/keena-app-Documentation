@@ -350,6 +350,200 @@ paths:
                     type: boolean
                     example: false
 
+  /qurioans/updateuser/{userId}:
+    put:
+      summary: Update User Information
+      description: |
+        Allows a user to update their profile information including name, phone number, password, and profile image.
+        On successful update, an event is emitted for further processing or logging.
+      tags:
+        - User - Profile
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: Unique identifier of the user
+          schema:
+            type: string
+            example: 6657b4d85c760c001f5b2101
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                firstName:
+                  type: string
+                  example: John
+                lastName:
+                  type: string
+                  example: Doe
+                phoneNumber:
+                  type: string
+                  example: "09012345678"
+                password:
+                  type: string
+                  format: password
+                  example: NewSecurePass123!
+                image:
+                  type: string
+                  format: binary
+                  description: Image file to upload as profile picture
+      responses:
+        "200":
+          description: User information updated successfully and event emitted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: user information updated successfully
+                  status:
+                    type: boolean
+                    example: true
+                  user:
+                    type: object
+                    properties:
+                      _id:
+                        type: string
+                        example: 6657b4d85c760c001f5b2101
+                      firstName:
+                        type: string
+                        example: John
+                      lastName:
+                        type: string
+                        example: Doe
+                      phoneNumber:
+                        type: string
+                        example: "09012345678"
+                      email:
+                        type: string
+                        example: johndoe@example.com
+                      avatarUrl:
+                        type: string
+                        example: https://res.cloudinary.com/appname/image/upload/v171000/avatar.jpg
+        "400":
+          description: Bad request due to missing fields or validation errors
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: User ID is required
+                  status:
+                    type: boolean
+                    example: false
+        "404":
+          description: User not found or invalid ID
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: User not found or Invalid ID
+                  status:
+                    type: boolean
+                    example: false
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Server error
+                  status:
+                    type: boolean
+                    example: false
+                  error:
+                    type: string
+                    example: Cannot read property 'path' of undefined
+
+  /qurioans/getuser/{userId}:
+    get:
+      summary: Get User Information by ID
+      description: Fetches user details by user ID.
+      tags:
+        - User - Profile
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: Unique identifier of the user
+          schema:
+            type: string
+            example: 6657b4d85c760c001f5b2101
+      responses:
+        "200":
+          description: User information retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: User retrieved successfully
+                  status:
+                    type: boolean
+                    example: true
+                  user:
+                    type: object
+                    properties:
+                      _id:
+                        type: string
+                        example: 6657b4d85c760c001f5b2101
+                      firstName:
+                        type: string
+                        example: John
+                      lastName:
+                        type: string
+                        example: Doe
+                      phoneNumber:
+                        type: string
+                        example: "09012345678"
+                      email:
+                        type: string
+                        example: johndoe@example.com
+                      avatarUrl:
+                        type: string
+                        example: https://res.cloudinary.com/appname/image/upload/v171000/avatar.jpg
+        "404":
+          description: User not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: User not found
+                  status:
+                    type: boolean
+                    example: false
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Internal server error
+                  status:
+                    type: boolean
+                    example: false
+
 components:
   schemas:
     UserSignupRequest:
@@ -361,12 +555,12 @@ components:
       properties:
         userName:
           type: string
-          example: johndoe
+          example: Keena
         email:
           type: string
           format: email
-          example: johndoe@example.com
+          example: tolanijimoh1@gmail.com
         password:
           type: string
           format: password
-          example: strongPassword123
+          example: userpassword123
