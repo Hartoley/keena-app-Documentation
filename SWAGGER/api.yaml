@@ -71,7 +71,8 @@ paths:
     post:
       summary: Login user
       description: Authenticates a user by validating email and password.
-
+      tags:
+        - User - Authentication
       requestBody:
         required: true
         content:
