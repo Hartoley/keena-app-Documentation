@@ -1,63 +1,34 @@
 openapi: 3.0.0
 info:
-  title: Keena Savory Bites API
-  description: This is Keena's savory bites web app documentation made by Keena
+  title: Qurio&Ans API
+  description: Qurio&Ans app API documentation
   version: 1.0.0
   contact:
-    name: Keena Jimoh
+    name: Keena
     email: tolanijimoh1@gmail.com
-    url: https://keenasavorybites.example.com
-  license:
-    name: Apache 2.0
-    url: http://www.apache.org/licenses/LICENSE-2.0.html
 
 servers:
-  - url: http://localhost:4000/
+  - url: http://localhost:5003/
     description: Local development server
-  - url: https://chef-chiller-node.onrender.com
+  - url: https://qurioans.onrender.com
     description: Production server
 
 paths:
-  /upload:
+  /qurioans/signup:
     post:
-      summary: Upload a new product
-      description: Admin can upload a new product with image and details.
+      summary: User Signup
+      description: Register a new user account by providing userName, email and password.
       tags:
-        - Products
+        - User - Authentication
       requestBody:
         required: true
         content:
-          multipart/form-data:
+          application/json:
             schema:
-              type: object
-              required:
-                - name
-                - category
-                - price
-                - image
-              properties:
-                name:
-                  type: string
-                  example: Spicy Chicken Wings
-                category:
-                  type: string
-                  example: Appetizer
-                prepTime:
-                  type: string
-                  example: 15 minutes
-                description:
-                  type: string
-                  example: Hot and crispy wings with spicy sauce
-                price:
-                  type: number
-                  format: float
-                  example: 9.99
-                image:
-                  type: string
-                  format: binary
+              $ref: "#/components/schemas/UserSignupRequest"
       responses:
-        "200":
-          description: Product uploaded successfully
+        "201":
+          description: User signed up successfully
           content:
             application/json:
               schema:
@@ -65,32 +36,62 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: Product uploaded successfully
-                  product:
-                    $ref: "#/components/schemas/Product"
+                    example: User signed up successfully
+                  status:
+                    type: boolean
+                    example: true
         "400":
-          description: Missing required fields
+          description: Invalid input or missing fields
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Input fields cannot be empty or invalid
+                  status:
+                    type: boolean
+                    example: false
         "409":
-          description: Product already exists
+          description: Username or email already exists
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Username already exists, kindly pick another one
+                  status:
+                    type: boolean
+                    example: false
         "500":
           description: Internal server error
+
 components:
   schemas:
-    Product:
+    UserSignupRequest:
       type: object
+      required:
+        - userName
+        - email
+        - password
+
       properties:
-        _id:
+        userName:
           type: string
-        name:
+          description: Unique username, at least 8 characters.
+          minLength: 8
+          example: johndoe123
+        email:
           type: string
-        category:
+          format: email
+          description: User email address.
+          example: johndoe@example.com
+        password:
           type: string
-        prepTime:
-          type: string
-        description:
-          type: string
-        price:
-          type: number
-        image:
-          type: string
-          format: uri
+          format: password
+          description: Password with at least 8 characters.
+          minLength: 8
+          example: StrongPass123!
