@@ -163,3 +163,45 @@ paths:
                   message:
                     type: string
                     example: Internal server error
+
+                    components:
+  schemas:
+    UserSignupRequest:
+      type: object
+      required:
+        - userName
+        - email
+        - password
+      properties:
+        userName:
+          type: string
+          example: johndoe
+        email:
+          type: string
+          format: email
+          example: johndoe@example.com
+        password:
+          type: string
+          format: password
+          example: strongPassword123
+
+components:
+  schemas:
+    UserSignupRequest:
+      type: object
+      required:
+        - userName
+        - email
+        - password
+      properties:
+        userName:
+          type: string
+          example: johndoe
+        email:
+          type: string
+          format: email
+          example: johndoe@example.com
+        password:
+          type: string
+          format: password
+          example: strongPassword123
