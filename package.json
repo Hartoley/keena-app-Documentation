@@ -6,7 +6,10 @@
     "yamljs": "^0.3.0"
   },
   "scripts": {
-   "start": "node SWAGGER/index.js",
-  "dev": "nodemon SWAGGER/index.js"
-}
+    "start": "node SWAGGER/index.js",
+    "dev": "nodemon SWAGGER/index.js"
+  },
+  "devDependencies": {
+    "swagger-cli": "^4.0.4"
+  }
 }

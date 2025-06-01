@@ -544,6 +544,482 @@ paths:
                     type: boolean
                     example: false
 
+  /createblog/{adminId}:
+    post:
+      summary: Create a new blog post
+      description: Creates a blog post by an admin with optional images/videos.
+      tags:
+        - Blogs
+      parameters:
+        - name: adminId
+          in: path
+          required: true
+          schema:
+            type: string
+          example: 64fe81a9b9c41e001eaa1234
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  example: My First Blog
+                subtitle:
+                  type: string
+                  example: An exciting journey
+                body:
+                  type: string
+                  example: This is the content of the blog...
+                files:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+                  description: Optional images or videos to upload
+      responses:
+        "201":
+          description: Blog created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Blog"
+        "404":
+          description: Admin not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Admin not found
+                  status:
+                    type: boolean
+                    example: false
+
+    get:
+      summary: Get all blogs by admin
+      description: Fetches all blogs created by the specified admin.
+      tags:
+        - Blogs
+      parameters:
+        - name: adminId
+          in: path
+          required: true
+          schema:
+            type: string
+          example: 64fe81a9b9c41e001eaa1234
+      responses:
+        "200":
+          description: List of blogs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Blog"
+        "404":
+          description: Admin not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Admin not found
+                  status:
+                    type: boolean
+                    example: false
+
+  /blogs/blog/{blogId}:
+    get:
+      summary: Get blog by ID
+      description: Fetch a single blog post by its ID.
+      tags:
+        - Blogs
+      parameters:
+        - name: blogId
+          in: path
+          required: true
+          schema:
+            type: string
+          example: 64fe82a9b9c41e001eaa5678
+      responses:
+        "200":
+          description: Blog details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Blog"
+        "404":
+          description: Blog not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Blog not found
+
+  /blogs/{adminId}/{blogId}:
+    put:
+      summary: Update a blog post
+      description: Update blog details including title, subtitle, body, and images.
+      tags:
+        - Blogs
+      parameters:
+        - name: adminId
+          in: path
+          required: true
+          schema:
+            type: string
+          example: 64fe81a9b9c41e001eaa1234
+        - name: blogId
+          in: path
+          required: true
+          schema:
+            type: string
+          example: 64fe82a9b9c41e001eaa5678
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  example: Updated Blog Title
+                subtitle:
+                  type: string
+                  example: Updated Subtitle
+                body:
+                  type: string
+                  example: Updated blog content...
+                imagesToKeep:
+                  type: string
+                  description: JSON stringified array of image URLs to retain in the blog.
+                  example: '["https://res.cloudinary.com/.../image1.jpg","https://res.cloudinary.com/.../image2.jpg"]'
+                files:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+                  description: New images/videos to add
+      responses:
+        "200":
+          description: Blog updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Blog updated successfully
+                  blog:
+                    $ref: "#/components/schemas/Blog"
+        "404":
+          description: Admin or blog not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Blog not found or Admin not found
+                  status:
+                    type: boolean
+                    example: false
+
+  /signup:
+    post:
+      summary: Admin Signup
+      description: Register a new admin account.
+      tags:
+        - Admin - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AdminSignupRequest"
+      responses:
+        "201":
+          description: Admin signed up successfully. OTP sent.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Admin signed up successfully. OTP sent to your email for verification.
+                  status:
+                    type: boolean
+                    example: true
+                  userId:
+                    type: string
+                    example: 6657b4d85c760c001f5b2101
+                  otp:
+                    type: string
+                    example: "123456"
+        # Other responses...
+
+  /verifyotp/{adminId}:
+    get:
+      summary: Verify Admin OTP
+      description: Confirms admin's OTP and activates the account.
+      tags:
+        - Admin - Authentication
+      parameters:
+        - name: adminId
+          in: path
+          required: true
+          schema:
+            type: string
+          example: 6657b4d85c760c001f5b2101
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - otp
+              properties:
+                otp:
+                  type: string
+                  example: "123456"
+      responses:
+        "200":
+          description: OTP verified successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: OTP verified successfully. Account is now active.
+                  status:
+                    type: boolean
+                    example: true
+        # Other responses...
+
+  /regenerateotp/{adminId}:
+    get:
+      summary: Regenerate OTP
+      description: Generates a new OTP for an unverified admin.
+      tags:
+        - Admin - Authentication
+      parameters:
+        - name: adminId
+          in: path
+          required: true
+          schema:
+            type: string
+            example: 64fe81a9b9c41e001eaa1234
+      responses:
+        "201":
+          description: OTP regenerated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Newly generated OTP sent to your email for verification.
+                  status:
+                    type: boolean
+                    example: true
+                  adminId:
+                    type: string
+                    example: 64fe81a9b9c41e001eaa1234
+                  otp:
+                    type: string
+                    example: "123456"
+        # Other responses...
+
+  /signin:
+    post:
+      summary: Admin Signin
+      description: Authenticate admin by validating email and password.
+      tags:
+        - Admin - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: admin@example.com
+                password:
+                  type: string
+                  format: password
+                  example: adminPassword123
+      responses:
+        "200":
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Admin logged in successfully
+                  status:
+                    type: boolean
+                    example: true
+                  email:
+                    type: string
+                    example: admin@example.com
+                  role:
+                    type: string
+                    example: admin
+                  id:
+                    type: string
+                    example: 64fe81a9b9c41e001eaa1234
+        # Other responses...
+
+  /updateuser/{adminId}:
+    put:
+      summary: Update Admin Information
+      description: Allows admin to update profile info including phone, password, and profile image.
+      tags:
+        - Admin - Profile
+      parameters:
+        - name: adminId
+          in: path
+          required: true
+          schema:
+            type: string
+            example: 6657b4d85c760c001f5b2101
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                firstName:
+                  type: string
+                  example: John
+                lastName:
+                  type: string
+                  example: Doe
+                phoneNumber:
+                  type: string
+                  example: "09012345678"
+                password:
+                  type: string
+                  format: password
+                  example: NewSecurePass123!
+                image:
+                  type: string
+                  format: binary
+                  description: Profile picture
+      responses:
+        "200":
+          description: Admin info updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Admin information updated successfully
+                  status:
+                    type: boolean
+                    example: true
+                  user:
+                    type: object
+                    properties:
+                      _id:
+                        type: string
+                        example: 6657b4d85c760c001f5b2101
+                      firstName:
+                        type: string
+                        example: John
+                      lastName:
+                        type: string
+                        example: Doe
+                      phoneNumber:
+                        type: string
+                        example: "09012345678"
+                      email:
+                        type: string
+                        example: johndoe@example.com
+                      avatarUrl:
+                        type: string
+                        example: https://res.cloudinary.com/appname/image/upload/v171000/avatar.jpg
+        # Other responses...
+
+  /getuser/{adminId}:
+    get:
+      summary: Get Admin Information by ID
+      description: Fetches admin user details by user ID.
+      tags:
+        - Admin - Profile
+      parameters:
+        - name: adminId
+          in: path
+          required: true
+          schema:
+            type: string
+            example: 6657b4d85c760c001f5b2101
+      responses:
+        "200":
+          description: Admin information retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Admin retrieved successfully
+                  status:
+                    type: boolean
+                    example: true
+                  user:
+                    type: object
+                    properties:
+                      _id:
+                        type: string
+                        example: 6657b4d85c760c001f5b2101
+                      firstName:
+                        type: string
+                        example: John
+                      lastName:
+                        type: string
+                        example: Doe
+                      phoneNumber:
+                        type: string
+                        example: "09012345678"
+                      email:
+                        type: string
+                        example: johndoe@example.com
+                      avatarUrl:
+                        type: string
+                        example: https://res.cloudinary.com/appname/image/upload/v171000/avatar.jpg
+
 components:
   schemas:
     UserSignupRequest:
@@ -564,3 +1040,72 @@ components:
           type: string
           format: password
           example: userpassword123
+
+    Blog:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: 64fe82a9b9c41e001eaa5678
+        title:
+          type: string
+          example: My First Blog
+        subtitle:
+          type: string
+          example: An exciting journey
+        body:
+          type: string
+          example: This is the content of the blog...
+        image:
+          type: array
+          items:
+            type: object
+            properties:
+              image:
+                type: string
+                example: https://res.cloudinary.com/appname/image/upload/v171000/blogimage.jpg
+        likesCount:
+          type: integer
+          example: 10
+        commentsCount:
+          type: integer
+          example: 2
+        createdBy:
+          type: object
+          properties:
+            _id:
+              type: string
+              example: 64fe81a9b9c41e001eaa1234
+            userName:
+              type: string
+              example: adminuser
+            email:
+              type: string
+              example: admin@example.com
+        createdAt:
+          type: string
+          format: date-time
+          example: 2025-06-01T12:00:00Z
+        updatedAt:
+          type: string
+          format: date-time
+          example: 2025-06-01T13:00:00Z
+
+    AdminSignupRequest:
+      type: object
+      required:
+        - userName
+        - email
+        - password
+      properties:
+        userName:
+          type: string
+          example: adminuser
+        email:
+          type: string
+          format: email
+          example: admin@example.com
+        password:
+          type: string
+          format: password
+          example: adminPassword123
