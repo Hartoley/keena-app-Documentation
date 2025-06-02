@@ -602,18 +602,62 @@ paths:
 
   /blogs:
     get:
-      summary: Get all blogs blogss.
-      description: Fetches all blogs.
+      summary: Retrieve all blog posts
+      description: Fetches all available blogs from the database.
       tags:
         - Blogs
       responses:
         "200":
-          description: List of blogs
+          description: A list of blog posts
           content:
             application/json:
               schema:
                 type: array
                 items:
+                  $ref: "#/components/schemas/Blog"
+              examples:
+                success:
+                  summary: Successful response
+                  value:
+                    - _id: "60d21b4667d0d8992e610c85"
+                      title: "Understanding Node.js"
+                      subtitle: "An introduction to Node.js"
+                      body: "Node.js is a JavaScript runtime built on Chrome's V8 engine..."
+                      image:
+                        image: "https://res.cloudinary.com/example/image/upload/v1624512345/blog1.jpg"
+                      likesCount: 120
+                      commentsCount: 15
+                      createdBy:
+                        _id: "60d21b0267d0d8992e610c84"
+                        name: "Admin User"
+                      comments: []
+                      createdAt: "2021-06-23T10:20:54.000Z"
+                      updatedAt: "2021-06-23T10:20:54.000Z"
+                    - _id: "60d21b4967d0d8992e610c86"
+                      title: "Express.js Basics"
+                      subtitle: "Getting started with Express.js"
+                      body: "Express.js is a minimal and flexible Node.js web application framework..."
+                      image:
+                        image: "https://res.cloudinary.com/example/image/upload/v1624512350/blog2.jpg"
+                      likesCount: 85
+                      commentsCount: 10
+                      createdBy:
+                        _id: "60d21b0267d0d8992e610c84"
+                        name: "Admin User"
+                      comments: []
+                      createdAt: "2021-06-23T10:21:05.000Z"
+                      updatedAt: "2021-06-23T10:21:05.000Z"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              examples:
+                serverError:
+                  summary: Server error response
+                  value:
+                    error: "An unexpected error occurred while retrieving blogs."
 
   /blog/{blogId}:
     get:
