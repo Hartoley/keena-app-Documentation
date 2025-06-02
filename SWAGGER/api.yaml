@@ -1225,6 +1225,205 @@ paths:
                     type: string
                     example: Invalid comment data
 
+  /replycomment/{blogId}/{commentId}:
+    put:
+      summary: Add a reply to a comment
+      description: Adds a reply to a specific comment in a blog post.
+      tags:
+        - Blogs
+      parameters:
+        - name: blogId
+          in: path
+          required: true
+          schema:
+            type: string
+          example: 64fe9a7b8d2f4b001e9b1234
+        - name: commentId
+          in: path
+          required: true
+          schema:
+            type: string
+          example: 65001fbb8a3e7b001a9f4321
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                commenter:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                      description: ID of the user/admin commenting
+                      example: 64fe123abc456d0012ef3456
+                    model:
+                      type: string
+                      enum: [User, Admin]
+                      example: User
+                  required:
+                    - id
+                    - model
+                comment:
+                  type: string
+                  description: The reply text
+                  example: This is a reply to the comment!
+              required:
+                - commenter
+                - comment
+      responses:
+        "201":
+          description: Reply added successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Blog"
+        "404":
+          description: Blog or comment not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Blog not found
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+
+  /likecomment/{blogId}/{commentId}:
+    put:
+      summary: Like a comment on a blog
+      description: Adds a like to a comment by a user.
+      tags:
+        - Blogs
+      parameters:
+        - name: blogId
+          in: path
+          required: true
+          schema:
+            type: string
+          example: 64fe9a7b8d2f4b001e9b1234
+        - name: commentId
+          in: path
+          required: true
+          schema:
+            type: string
+          example: 65001fbb8a3e7b001a9f4321
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: string
+                  description: ID of the user liking the comment
+                  example: 64fe123abc456d0012ef3456
+              required:
+                - userId
+      responses:
+        "200":
+          description: Comment liked successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Blog"
+        "404":
+          description: Blog or comment not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Comment not found
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+
+  /likereply/{blogId}/{commentId}/{replyIndex}:
+    put:
+      summary: Like a reply to a comment
+      description: Adds a like to a reply of a comment.
+      tags:
+        - Blogs
+      parameters:
+        - name: blogId
+          in: path
+          required: true
+          schema:
+            type: string
+          example: 64fe9a7b8d2f4b001e9b1234
+        - name: commentId
+          in: path
+          required: true
+          schema:
+            type: string
+          example: 65001fbb8a3e7b001a9f4321
+        - name: replyIndex
+          in: path
+          required: true
+          schema:
+            type: integer
+            minimum: 0
+          example: 0
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: string
+                  description: ID of the user liking the reply
+                  example: 64fe123abc456d0012ef3456
+              required:
+                - userId
+      responses:
+        "200":
+          description: Reply liked successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Blog"
+        "404":
+          description: Blog, comment, or reply not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Reply not found
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+
 components:
   schemas:
     UserSignupRequest:
@@ -1287,6 +1486,78 @@ components:
             email:
               type: string
               example: admin@example.com
+        comments:
+          type: array
+          items:
+            type: object
+            properties:
+              _id:
+                type: string
+                example: 683d8a80bc663ad0cd81d289
+              commenter:
+                type: object
+                properties:
+                  userId:
+                    type: string
+                    example: 64fe81a9b9c41e001eaa1234
+                  model:
+                    type: string
+                    enum:
+                      - User
+                      - Admin
+                    example: User
+              comment:
+                type: string
+                example: Lovely content
+              likesCount:
+                type: integer
+                example: 1
+              likedBy:
+                type: array
+                items:
+                  type: string
+                example:
+                  - 64fe123abc456d0012ef3456
+              replies:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    _id:
+                      type: string
+                      example: 683d8bcb60aea840062d40f1
+                    commenter:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          example: 64fe123abc456d0012ef3456
+                        model:
+                          type: string
+                          enum:
+                            - User
+                            - Admin
+                          example: User
+                    comment:
+                      type: string
+                      example: Absolutely!
+                    likesCount:
+                      type: integer
+                      example: 1
+                    likedBy:
+                      type: array
+                      items:
+                        type: string
+                      example:
+                        - 64fe123abc456d0012ef3456
+                    createdAt:
+                      type: string
+                      format: date-time
+                      example: 2025-06-02T11:32:27.645Z
+              createdAt:
+                type: string
+                format: date-time
+                example: 2025-06-02T11:26:56.510Z
         createdAt:
           type: string
           format: date-time
