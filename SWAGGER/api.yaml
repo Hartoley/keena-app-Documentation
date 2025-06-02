@@ -600,18 +600,12 @@ paths:
                     type: boolean
                     example: false
 
+  /blogs:
     get:
-      summary: Get all blogs by admin
-      description: Fetches all blogs created by the specified admin.
+      summary: Get all blogs blogss.
+      description: Fetches all blogs.
       tags:
         - Blogs
-      parameters:
-        - name: adminId
-          in: path
-          required: true
-          schema:
-            type: string
-          example: 64fe81a9b9c41e001eaa1234
       responses:
         "200":
           description: List of blogs
@@ -620,22 +614,8 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/Blog"
-        "404":
-          description: Admin not found
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: Admin not found
-                  status:
-                    type: boolean
-                    example: false
 
-  /blogs/blog/{blogId}:
+  /blog/{blogId}:
     get:
       summary: Get blog by ID
       description: Fetch a single blog post by its ID.
