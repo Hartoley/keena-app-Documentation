@@ -1044,6 +1044,187 @@ paths:
                         type: string
                         example: https://res.cloudinary.com/appname/image/upload/v171000/avatar.jpg
 
+  /delete/{adminId}/{blogId}:
+    delete:
+      summary: Delete a blog post
+      description: Deletes a blog post by an admin.
+      tags:
+        - Blogs
+      parameters:
+        - name: adminId
+          in: path
+          description: ID of the admin
+          required: true
+          schema:
+            type: string
+          example: 64fe81a9b9c41e001eaa1234
+        - name: blogId
+          in: path
+          description: ID of the blog to delete
+          required: true
+          schema:
+            type: string
+          example: 64fe9a7b8d2f4b001e9b1234
+      responses:
+        "200":
+          description: Blog deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Blog deleted
+        "404":
+          description: Admin or Blog not found
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: object
+                    properties:
+                      message:
+                        type: string
+                        example: Admin not found
+                      status:
+                        type: boolean
+                        example: false
+                  - type: object
+                    properties:
+                      error:
+                        type: string
+                        example: Blog not found
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Internal server error
+
+  /likeblog/{userId}/{blogId}:
+    put:
+      summary: Like a blog post
+      description: Add a like to a blog post by a user.
+      tags:
+        - Blogs
+      parameters:
+        - name: userId
+          in: path
+          description: ID of the user liking the blog
+          required: true
+          schema:
+            type: string
+          example: 64fe123abc456d0012ef3456
+        - name: blogId
+          in: path
+          description: ID of the blog to like
+          required: true
+          schema:
+            type: string
+          example: 64fe9a7b8d2f4b001e9b1234
+      responses:
+        "201":
+          description: Blog liked successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Blog liked
+                  likesCount:
+                    type: integer
+                    example: 5
+        "400":
+          description: Bad request (missing userId or already liked)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: User already liked this blog
+        "404":
+          description: Blog not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Blog not found
+
+  /comment/{userId}/{blogId}:
+    put:
+      summary: Add a comment to a blog post
+      description: Adds a comment by a user to a blog post.
+      tags:
+        - Blogs
+      parameters:
+        - name: userId
+          in: path
+          description: ID of the user commenting
+          required: true
+          schema:
+            type: string
+          example: 64fe123abc456d0012ef3456
+        - name: blogId
+          in: path
+          description: ID of the blog to comment on
+          required: true
+          schema:
+            type: string
+          example: 64fe9a7b8d2f4b001e9b1234
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                comment:
+                  type: string
+                  example: This is a great blog post!
+                model:
+                  type: string
+                  description: Model of the commenter, defaults to "User"
+                  example: User
+      responses:
+        "201":
+          description: Comment added successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Blog"
+        "404":
+          description: Blog not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Blog not found
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Invalid comment data
+
 components:
   schemas:
     UserSignupRequest:
