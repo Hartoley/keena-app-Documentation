@@ -646,7 +646,7 @@ paths:
                     type: string
                     example: Blog not found
 
-  /blogs/{adminId}/{blogId}:
+  /updateblog/{adminId}/{blogId}:
     put:
       summary: Update a blog post
       description: Update blog details including title, subtitle, body, and images.
