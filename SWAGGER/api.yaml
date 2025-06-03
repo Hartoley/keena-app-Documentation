@@ -615,49 +615,16 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/Blog"
-              examples:
-                success:
-                  summary: Successful response
-                  value:
-                    - _id: "60d21b4667d0d8992e610c85"
-                      title: "Understanding Node.js"
-                      subtitle: "An introduction to Node.js"
-                      body: "Node.js is a JavaScript runtime built on Chrome's V8 engine..."
-                      image:
-                        image: "https://res.cloudinary.com/example/image/upload/v1624512345/blog1.jpg"
-                      likesCount: 120
-                      commentsCount: 15
-                      createdBy:
-                        _id: "60d21b0267d0d8992e610c84"
-                        name: "Admin User"
-                      comments: []
-                      createdAt: "2021-06-23T10:20:54.000Z"
-                      updatedAt: "2021-06-23T10:20:54.000Z"
-                    - _id: "60d21b4967d0d8992e610c86"
-                      title: "Express.js Basics"
-                      subtitle: "Getting started with Express.js"
-                      body: "Express.js is a minimal and flexible Node.js web application framework..."
-                      image:
-                        image: "https://res.cloudinary.com/example/image/upload/v1624512350/blog2.jpg"
-                      likesCount: 85
-                      commentsCount: 10
-                      createdBy:
-                        _id: "60d21b0267d0d8992e610c84"
-                        name: "Admin User"
-                      comments: []
-                      createdAt: "2021-06-23T10:21:05.000Z"
-                      updatedAt: "2021-06-23T10:21:05.000Z"
         "500":
           description: Internal server error
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas"
-              examples:
-                serverError:
-                  summary: Server error response
-                  value:
-                    error: "An unexpected error occurred while retrieving blogs."
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: An unexpected error occurred while retrieving blogs.
 
   /blog/{blogId}:
     get:
@@ -1483,9 +1450,9 @@ components:
             userName:
               type: string
               example: adminuser
-            email:
+            avatarUrl:
               type: string
-              example: admin@example.com
+              example: https://res.cloudinary.com/appname/image/upload/v171000/avatar.jpg
         comments:
           type: array
           items:
@@ -1498,13 +1465,20 @@ components:
                 type: object
                 properties:
                   userId:
-                    type: string
-                    example: 64fe81a9b9c41e001eaa1234
+                    type: object
+                    properties:
+                      _id:
+                        type: string
+                        example: 64fe81a9b9c41e001eaa1234
+                      userName:
+                        type: string
+                        example: john_doe
+                      avatarUrl:
+                        type: string
+                        example: https://res.cloudinary.com/appname/image/upload/v171000/avatar.jpg
                   model:
                     type: string
-                    enum:
-                      - User
-                      - Admin
+                    enum: [User, Admin]
                     example: User
               comment:
                 type: string
@@ -1515,9 +1489,17 @@ components:
               likedBy:
                 type: array
                 items:
-                  type: string
-                example:
-                  - 64fe123abc456d0012ef3456
+                  type: object
+                  properties:
+                    _id:
+                      type: string
+                      example: 64fe123abc456d0012ef3456
+                    userName:
+                      type: string
+                      example: liker_user
+                    avatarUrl:
+                      type: string
+                      example: https://res.cloudinary.com/appname/image/upload/v171000/liker.jpg
               replies:
                 type: array
                 items:
@@ -1530,13 +1512,20 @@ components:
                       type: object
                       properties:
                         id:
-                          type: string
-                          example: 64fe123abc456d0012ef3456
+                          type: object
+                          properties:
+                            _id:
+                              type: string
+                              example: 64fe123abc456d0012ef3456
+                            userName:
+                              type: string
+                              example: replier_user
+                            avatarUrl:
+                              type: string
+                              example: https://res.cloudinary.com/appname/image/upload/v171000/replier.jpg
                         model:
                           type: string
-                          enum:
-                            - User
-                            - Admin
+                          enum: [User, Admin]
                           example: User
                     comment:
                       type: string
@@ -1547,9 +1536,17 @@ components:
                     likedBy:
                       type: array
                       items:
-                        type: string
-                      example:
-                        - 64fe123abc456d0012ef3456
+                        type: object
+                        properties:
+                          _id:
+                            type: string
+                            example: 64fe123abc456d0012ef3456
+                          userName:
+                            type: string
+                            example: liker_user
+                          avatarUrl:
+                            type: string
+                            example: https://res.cloudinary.com/appname/image/upload/v171000/liker.jpg
                     createdAt:
                       type: string
                       format: date-time
